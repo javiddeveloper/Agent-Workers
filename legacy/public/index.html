@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agent Workers</title>
+  <link rel="stylesheet" href="/vendor/xterm/css/xterm.css">
+  <link rel="stylesheet" href="/style.css">
+  <script>window.AGENT_WORKERS_TOKEN = '__TOKEN__';</script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Agent Workers</div>
+    <div class="topbar-actions">
+      <label class="cols">Columns
+        <select id="cols">
+          <option value="1">1</option><option value="2" selected>2</option>
+          <option value="3">3</option><option value="4">4</option>
+        </select>
+      </label>
+      <button id="toggle-board" class="ghost">Task board</button>
+      <button id="add-agent" class="primary">+ Agent</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section id="grid" class="grid"></section>
+    <aside id="board" class="board">
+      <h2>Task board</h2>
+      <form id="task-form" class="task-form">
+        <select name="to" required></select>
+        <input name="title" placeholder="Task title" required>
+        <textarea name="details" rows="3" placeholder="Details (optional)"></textarea>
+        <button class="primary" type="submit">Assign task</button>
+      </form>
+      <form id="send-form" class="task-form">
+        <div class="row">
+          <select name="to" required></select>
+          <input name="message" placeholder="Message to agent" required>
+        </div>
+        <button class="ghost" type="submit">Send message</button>
+      </form>
+      <label class="show-done"><input type="checkbox" id="show-done"> Show done</label>
+      <div id="tasks" class="tasks"></div>
+    </aside>
+  </main>
+
+  <div id="empty" class="empty" hidden>
+    <p>No agents yet.</p>
+    <p>Add an orchestrator and a few coders to get started.</p>
+    <button class="primary" onclick="document.getElementById('add-agent').click()">+ Add your first agent</button>
+  </div>
+
+  <dialog id="agent-dialog">
+    <form id="agent-form" method="dialog">
+      <h2 id="agent-dialog-title">New agent</h2>
+      <div class="fields">
+        <label>Name <input name="name" required placeholder="e.g. lead, coder-1"></label>
+        <label>CLI
+          <select name="cli">
+            <option value="claude">Claude Code</option>
+            <option value="gemini">Gemini CLI</option>
+            <option value="custom">Custom command</option>
+          </select>
+        </label>
+        <label class="only-custom">Command <input name="command" placeholder="e.g. codex"></label>
+        <label class="not-custom">Account
+          <input name="account" list="accounts" value="default">
+          <small>"default" = your normal login. Any other name gets its own login, stored in ~/.agent-workers/accounts/&lt;name&gt;.</small>
+        </label>
+        <label class="not-custom">Model <input name="model" list="models" placeholder="empty = CLI default"></label>
+        <label>Role
+          <select name="role">
+            <option value="orchestrator">Orchestrator (plans and assigns)</option>
+            <option value="coder" selected>Coder</option>
+            <option value="reviewer">Reviewer</option>
+            <option value="custom">Custom</option>
+          </select>
+        </label>
+        <label class="wide">Instructions <textarea name="instructions" rows="5"></textarea></label>
+        <label class="wide">Working directory <input name="cwd" placeholder="~/Projects/my-app"></label>
+        <label>Extra args <input name="extraArgs" placeholder="optional CLI flags"></label>
+        <label class="check"><input type="checkbox" name="autoApprove"> Auto-approve tool use (no permission prompts)</label>
+      </div>
+      <datalist id="accounts"></datalist>
+      <datalist id="models">
+        <option value="opus"><option value="sonnet"><option value="haiku">
+      </datalist>
+      <menu>
+        <button value="cancel" formnovalidate class="ghost">Cancel</button>
+        <button value="save" class="primary" id="agent-save">Create and start</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
